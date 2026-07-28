@@ -63,6 +63,22 @@ ndk_http_rewrite_value (ngx_conf_t *cf, ndk_http_rewrite_loc_conf_t *lcf,
         return NGX_CONF_ERROR;
     }
 
+    #if defined(nginx_version) && \
+        ((nginx_version >= 1030004 && nginx_version < 1031000) || nginx_version >= 1031003)
+        {
+            ngx_http_script_complex_value_end_code_t  *complex_end;
+    
+            complex_end = ngx_http_script_add_code(lcf->codes,
+                              sizeof(ngx_http_script_complex_value_end_code_t),
+                              &complex);
+            if (complex_end == NULL) {
+                return NGX_CONF_ERROR;
+            }
+    
+            complex_end->code = ngx_http_script_complex_value_end_code;
+        }
+    #endif
+
     return NGX_CONF_OK;
 }
 
